@@ -21,6 +21,7 @@ func main() {
 
 	g := gin.Default()
 	g.GET("/add/:a/:b", func(ctx *gin.Context) {
+		//10 - base number; 64 - type integer
 		a, err := strconv.ParseUint(ctx.Param("a"), 10, 64)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Parameter A"})
