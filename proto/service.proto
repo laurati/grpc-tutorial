@@ -13,7 +13,22 @@ message Response {
   int64 result = 1; 
 }
 
+message GeDataParams{
+
+}
+
+message DataList{
+  repeated Dados dados = 1;
+}
+
+message Dados{
+  int64 datatype_id = 1;
+  float data_min = 2;
+  float data_max = 3;
+}
+
 service AddService {
   rpc Add(Request) returns (Response);
   rpc Multiply(Request) returns (Response);
+  rpc GetData(GeDataParams) returns (DataList);
 }

@@ -66,6 +66,19 @@ func main() {
 		}
 	})
 
+	g.GET("/dados", func(ctx *gin.Context) {
+
+		req := &proto.GeDataParams{}
+
+		if response, err := client.GetData(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"result": fmt.Sprint(response.Dados),
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+	})
+
 	if err := g.Run(":8080"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AddServiceClient interface {
 	Add(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 	Multiply(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	GetData(ctx context.Context, in *GeDataParams, opts ...grpc.CallOption) (*DataList, error)
 }
 
 type addServiceClient struct {
@@ -48,12 +49,22 @@ func (c *addServiceClient) Multiply(ctx context.Context, in *Request, opts ...gr
 	return out, nil
 }
 
+func (c *addServiceClient) GetData(ctx context.Context, in *GeDataParams, opts ...grpc.CallOption) (*DataList, error) {
+	out := new(DataList)
+	err := c.cc.Invoke(ctx, "/proto.AddService/GetData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AddServiceServer is the server API for AddService service.
 // All implementations must embed UnimplementedAddServiceServer
 // for forward compatibility
 type AddServiceServer interface {
 	Add(context.Context, *Request) (*Response, error)
 	Multiply(context.Context, *Request) (*Response, error)
+	GetData(context.Context, *GeDataParams) (*DataList, error)
 	mustEmbedUnimplementedAddServiceServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedAddServiceServer) Add(context.Context, *Request) (*Response, 
 }
 func (UnimplementedAddServiceServer) Multiply(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Multiply not implemented")
+}
+func (UnimplementedAddServiceServer) GetData(context.Context, *GeDataParams) (*DataList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetData not implemented")
 }
 func (UnimplementedAddServiceServer) mustEmbedUnimplementedAddServiceServer() {}
 
@@ -116,6 +130,24 @@ func _AddService_Multiply_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AddService_GetData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GeDataParams)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AddServiceServer).GetData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.AddService/GetData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AddServiceServer).GetData(ctx, req.(*GeDataParams))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AddService_ServiceDesc is the grpc.ServiceDesc for AddService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +162,10 @@ var AddService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Multiply",
 			Handler:    _AddService_Multiply_Handler,
+		},
+		{
+			MethodName: "GetData",
+			Handler:    _AddService_GetData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
