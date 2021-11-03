@@ -18,13 +18,13 @@ message GeDataParams{
 }
 
 message DataList{
-  repeated Dados dados = 1;
+  repeated Dados data_list = 1;
 }
 
 message Dados{
   int64 datatype_id = 1;
-  float data_min = 2;
-  float data_max = 3;
+  double data_min = 2;
+  double data_max = 3;
 }
 
 service AddService {

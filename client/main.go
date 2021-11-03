@@ -72,7 +72,7 @@ func main() {
 
 		if response, err := client.GetData(ctx, req); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
-				"result": fmt.Sprint(response.Dados),
+				"result": response.DataList,
 			})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

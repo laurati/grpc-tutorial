@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	proto "grpc-tutorial/proto"
 	"net"
 
@@ -37,14 +36,11 @@ func (s *server) GetData(ctx context.Context, request *proto.GeDataParams) (*pro
 
 	var data_list *proto.DataList = &proto.DataList{}
 
-	//data_list := []Dado_Big_Query{}
-
 	c := context.Background()
 
 	projectID := "testezeus-328313"
 	rows, err := bigquery.NewClient(c, projectID)
 
-	//rows, err := s.conn.Query(c, "SELECT datatype_id, data_min, data_max FROM `testezeus-328313.athena.Pixel` LIMIT 10")
 	if err != nil {
 		return nil, err
 	}
@@ -83,17 +79,17 @@ func (s *server) GetData(ctx context.Context, request *proto.GeDataParams) (*pro
 			return nil, err
 		}
 
-		dado := proto.Dados{}
+		dados := proto.Dados{DatatypeId: row[0].(int64), DataMin: row[1].(float64), DataMax: row[2].(float64)}
 
-		//row.Scan(&dado.DatatypeId, &dado.DataMin, &dado.DataMax)
+		data_list.DataList = append(data_list.DataList, &dados)
 
-		data_list.Dados = append(data_list.Dados, &dado)
-
-		fmt.Println(row)
+		//fmt.Println(row)
+		//fmt.Println(data_list)
 
 	}
 
-	return data_list, nil
+	//return data_list, nil
+	return &proto.DataList{DataList: data_list.DataList}, nil
 
 }
 
